@@ -1,0 +1,75 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  brew-audit:
+    name: brew audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@8eb7f2efa6ab636da09aef605b497fd5b8a7587d # master
+
+      - name: Link checkout into Homebrew taps
+        run: |
+          set -euo pipefail
+          tap_dir="$(brew --repo Firma-AI/openfirma)"
+          mkdir -p "$(dirname "$tap_dir")"
+          rm -rf "$tap_dir"
+          ln -s "$GITHUB_WORKSPACE" "$tap_dir"
+
+      - name: brew style
+        run: brew style ./Formula/firma.rb
+
+      - name: brew audit --strict
+        run: brew audit --strict --tap Firma-AI/openfirma
+
+  # brew-install runs `brew install` and `brew test` against the formula on
+  # every supported runner. It is currently disabled because the upstream
+  # `Firma-AI/openfirma` repository is private and its release assets cannot be
+  # downloaded by Homebrew without a custom download strategy. Re-enable by
+  # changing `if: false` to `if: true` (or removing the gate) once the upstream
+  # repository is public, or after adding a GitHubPrivateRepositoryRelease
+  # download strategy to the formula.
+  brew-install:
+    name: brew install (${{ matrix.os }})
+    needs: brew-audit
+    if: false
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest    # Linux x86_64
+          - macos-latest     # macOS arm64
+          - macos-13         # macOS x86_64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@8eb7f2efa6ab636da09aef605b497fd5b8a7587d # master
+
+      - name: brew install firma
+        run: brew install --formula --verbose ./Formula/firma.rb
+
+      - name: firma --version
+        run: firma --version
+
+      - name: brew test firma
+        run: brew test --formula ./Formula/firma.rb
