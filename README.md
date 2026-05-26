@@ -7,7 +7,8 @@ brew install firma-ai/openfirma/firma
 ## Maintainer notes
 
 After publishing a new GitHub Release in [`Firma-AI/openfirma`](https://github.com/Firma-AI/openfirma),
-regenerate `Formula/firma.rb` from the openfirma checkout:
+regenerate `Formula/firma.rb` from the openfirma checkout (do **not** merge a
+formula with placeholder checksums):
 
 ```bash
 ./scripts/update-homebrew-tap.sh 0.1.0 ../homebrew-openfirma
