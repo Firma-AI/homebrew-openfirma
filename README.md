@@ -1,71 +1,18 @@
-# homebrew-openfirma
-
-Homebrew tap for [OpenFirma](https://github.com/Firma-AI/openfirma) — a governed
-runtime for AI agents.
-
-## Install
+# Homebrew tap for OpenFirma
 
 ```bash
-brew tap Firma-AI/openfirma
-brew install firma
+brew install firma-ai/openfirma/firma
 ```
 
-One-liner without explicit tap step:
+## Maintainer notes
+
+After publishing a new GitHub Release in [`Firma-AI/openfirma`](https://github.com/Firma-AI/openfirma),
+regenerate `Formula/firma.rb` from the openfirma checkout (do **not** merge a
+formula with placeholder checksums):
 
 ```bash
-brew install Firma-AI/openfirma/firma
+./scripts/update-homebrew-tap.sh 0.1.0 ../homebrew-openfirma
 ```
 
-## Supported platforms
-
-| OS    | Architecture | Release target               |
-| ----- | ------------ | ---------------------------- |
-| macOS | arm64        | `aarch64-apple-darwin`       |
-| macOS | x86_64       | `x86_64-apple-darwin`        |
-| Linux | arm64        | `aarch64-unknown-linux-musl` |
-| Linux | x86_64       | `x86_64-unknown-linux-musl`  |
-
-Linux builds are statically linked against musl. Windows is not distributed via
-this tap — use the upstream installer instead.
-
-## Verify
-
-```bash
-firma --version
-firma --help
-```
-
-## Upgrade
-
-```bash
-brew update
-brew upgrade firma
-```
-
-## Uninstall
-
-```bash
-brew uninstall firma
-brew untap Firma-AI/openfirma
-```
-
-## Updating the formula
-
-`Formula/firma.rb` pins one `version`, four release URLs, and four SHA-256
-digests (one per target triple). Every release bump must update all five
-fields. The digests come from the `firma-<version>-<target>.tar.gz.sha256`
-sidecar files attached to the GitHub release.
-
-Fast path with [`brew bump-formula-pr`](https://docs.brew.sh/Manpage#bump-formula-pr):
-
-```bash
-brew bump-formula-pr \
-  --tap=Firma-AI/openfirma \
-  --version=<new-version> \
-  firma
-```
-
-## License
-
-[The Unlicense](./LICENSE). The formula text is public domain; the upstream
-`firma` binary is licensed separately under Apache-2.0.
+The release workflow in openfirma can also push this automatically when
+`HOMEBREW_TAP_TOKEN` is configured.
