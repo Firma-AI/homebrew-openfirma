@@ -5,23 +5,23 @@ class Firma < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.1/firma-0.1.1-aarch64-apple-darwin.tar.gz"
-      sha256 "e12ebcdf422a227dd45d1f41bb9c6d21033f340fbe0e40960832c28c17efd452"
+      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.2/firma-0.1.2-aarch64-apple-darwin.tar.gz"
+      sha256 "0e58931e017522151de747bc0b79ccb69ee49c25c8c82e47ca850717b57274b3"
     end
     on_intel do
-      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.1/firma-0.1.1-x86_64-apple-darwin.tar.gz"
-      sha256 "4fb1ff975ee73c97b270e53d8d029faf3d96ec33f19e6729cfea6c78882c869b"
+      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.2/firma-0.1.2-x86_64-apple-darwin.tar.gz"
+      sha256 "4f9def2d9abe3c8616654ea02813019fe601294d03403c373854460abd7385ba"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.1/firma-0.1.1-aarch64-unknown-linux-musl.tar.gz"
-      sha256 "ac3fe03d1306ee8b103a6c65722198b6ff94eac29513b03015f666cf2fc420b4"
+      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.2/firma-0.1.2-aarch64-unknown-linux-musl.tar.gz"
+      sha256 "8985faecdf4e1c2291c3e8a15e2fa61cd1f275c3f1309c3822fe1fe76e0fa191"
     end
     on_intel do
-      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.1/firma-0.1.1-x86_64-unknown-linux-musl.tar.gz"
-      sha256 "5fbce897efd56574151a0e158f8b52e8e0f69bcabf85b866ab1745f6616a7043"
+      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.2/firma-0.1.2-x86_64-unknown-linux-musl.tar.gz"
+      sha256 "eeb40cb3e984d582e0ab4dd323d2a6e17b8776e921da81e627f7c6ec7be699dd"
     end
   end
 
