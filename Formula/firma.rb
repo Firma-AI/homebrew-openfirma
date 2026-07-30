@@ -1,36 +1,71 @@
 class Firma < Formula
-  desc "Governed runtime for AI agents"
-  homepage "https://github.com/Firma-AI/openfirma"
-  license "Apache-2.0"
-
-  on_macos do
-    on_arm do
-      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.5/firma-0.1.5-aarch64-apple-darwin.tar.gz"
-      sha256 "ec9241c8b96924551df1bd45399f7bfe21fb1aeeefc4637ce583f94296bcdc69"
+  desc "Firma CLI for managing and running OpenFirma components"
+  homepage "https://openfirma.ai"
+  version "0.1.6"
+  if OS.mac?
+    if Hardware::CPU.arm?
+      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.6/firma-aarch64-apple-darwin.tar.gz"
+      sha256 "2782a459bb62371959d4664787429fce3e25199ea348221c5f721e4c034d7946"
     end
-    on_intel do
-      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.5/firma-0.1.5-x86_64-apple-darwin.tar.gz"
-      sha256 "5081663e4c70eb069e91f14277e2071ba39cf91a12b5a31e9d62d689ec291d40"
+    if Hardware::CPU.intel?
+      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.6/firma-x86_64-apple-darwin.tar.gz"
+      sha256 "ca0b1d8764881cf1021043200161571062e12eda5739fa0fef6096c9b60aba24"
     end
   end
-
-  on_linux do
-    on_arm do
-      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.5/firma-0.1.5-aarch64-unknown-linux-musl.tar.gz"
-      sha256 "f3bcfbbfa2fa172e96c54bfd8c876a2da7e7f98c40f8a8a1fca5dc81d14fab82"
+  if OS.linux?
+    if Hardware::CPU.arm?
+      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.6/firma-aarch64-unknown-linux-musl.tar.gz"
+      sha256 "0a1597915e8f3b432c83f6123dac5fa0d549967ad4814520c97ee0ff924f8ea8"
     end
-    on_intel do
-      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.5/firma-0.1.5-x86_64-unknown-linux-musl.tar.gz"
-      sha256 "38990c637e39b5b930ff80d459272ea3ffecc8513dae253aed32ebc4f3f73a57"
+    if Hardware::CPU.intel?
+      url "https://github.com/Firma-AI/openfirma/releases/download/v0.1.6/firma-x86_64-unknown-linux-musl.tar.gz"
+      sha256 "0c14ed8cf485cc3ba0aada80d53191eb3c17a9bb35d5469b567f975cdada5849"
+    end
+  end
+  license "GPL-3.0-only"
+
+  BINARY_ALIASES = {
+    "aarch64-apple-darwin":               {},
+    "aarch64-pc-windows-gnu":             {},
+    "aarch64-unknown-linux-gnu":          {},
+    "aarch64-unknown-linux-musl-dynamic": {},
+    "aarch64-unknown-linux-musl-static":  {},
+    "x86_64-apple-darwin":                {},
+    "x86_64-pc-windows-gnu":              {},
+    "x86_64-unknown-linux-gnu":           {},
+    "x86_64-unknown-linux-musl-dynamic":  {},
+    "x86_64-unknown-linux-musl-static":   {},
+  }.freeze
+
+  def target_triple
+    cpu = Hardware::CPU.arm? ? "aarch64" : "x86_64"
+    os = OS.mac? ? "apple-darwin" : "unknown-linux-gnu"
+
+    "#{cpu}-#{os}"
+  end
+
+  def install_binary_aliases!
+    BINARY_ALIASES[target_triple.to_sym].each do |source, dests|
+      dests.each do |dest|
+        bin.install_symlink bin/source.to_s => dest
+      end
     end
   end
 
   def install
-    bin.install "firma"
-  end
+    bin.install "firma" if OS.mac? && Hardware::CPU.arm?
+    bin.install "firma" if OS.mac? && Hardware::CPU.intel?
+    bin.install "firma" if OS.linux? && Hardware::CPU.arm?
+    bin.install "firma" if OS.linux? && Hardware::CPU.intel?
 
-  test do
-    assert_match version.to_s, shell_output("#{bin}/firma --version")
-    assert_match "config", shell_output("#{bin}/firma --help")
+    install_binary_aliases!
+
+    # Homebrew will automatically install these, so we don't need to do that
+    doc_files = Dir["README.*", "readme.*", "LICENSE", "LICENSE.*", "CHANGELOG.*"]
+    leftover_contents = Dir["*"] - doc_files
+
+    # Install any leftover files in pkgshare; these are probably config or
+    # sample files.
+    pkgshare.install(*leftover_contents) unless leftover_contents.empty?
   end
 end
